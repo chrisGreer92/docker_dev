@@ -2,30 +2,46 @@
 
 #Define parameters etc for each service
 services:
-  frontend:
+  web:
     #Tell it where to find dockerfile
     build: ./frontend
     #Use array/list syntax as we can have multiple ports
     ports:
       - 3000:3000
+
+  api:
+    build: ./backend
+    ports:
+      - 3001:3001
+
     #Environment variables also as list or object property syntax (more readable)
     environment:
       #Need environment variable to tell where database is
       # - DB_URL=mongodb://db/vidly
       #Can also use object/property valye syntax
       DB_URL: mongodb://db/vidly
+      
+    #Can again link our volumes to automatically use changes (ONLY WHEN DEVELOPING)
+    #Can do relative paths from here (Rather than absolute)
+    volumes:
+      - ./backend:/app
+      #Again, tell it NOT to use node_modules locally to avoid us needing to install dependencies
+      - /app/node_modules
 
-  backend:
-    build: ./backend
-    ports:
-      - 3001:3001
+    #Can overwrite default command in dockerfile
+    #Since db might not be up, need to use a waiting script!
+    # command: .wait-for db:27017 && migrate-mongo up && npm start
+    #Instead of above, used a basic shell script (keeps compose file cleaner)
+    command: ./docker-entrypoint.sh
     
-  database:
+  db:
     #Tell it to pull from docker hub (instead of build)
     image: mongo:4.0-xenial
+
     #Use port of that database client (check Postgresql)
     ports:
       - 27017:27017
+
     #Need mongo to write to different volume instead of /data/db
     volumes:
       - vidly:/data/db

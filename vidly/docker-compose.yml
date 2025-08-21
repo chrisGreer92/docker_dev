@@ -19,6 +19,7 @@ services:
     build: ./backend
     ports:
       - 3001:3001
+    
   database:
     #Tell it to pull from docker hub (instead of build)
     image: mongo:4.0-xenial

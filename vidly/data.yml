@@ -1,0 +1,15 @@
+# Begning of file
+---
+
+# Just using indendation (no braces) and no quotes
+# Slightly slower to parse than json
+name: docker
+price: 149
+isSet: true
+tags: 
+  - devops
+  - software
+usedBy:
+  firstName: Chris
+  lastName: Greer
+

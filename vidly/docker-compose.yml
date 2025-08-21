@@ -1,29 +1,37 @@
-version: "3.8"
+#Version is no longer used (always uses most recent)
 
+#Define parameters etc for each service
 services:
   frontend:
-    depends_on: 
-      - backend
+    #Tell it where to find dockerfile
     build: ./frontend
+    #Use array/list syntax as we can have multiple ports
     ports:
       - 3000:3000
-
-  backend: 
-    depends_on: 
-      - db
-    build: ./backend
-    ports: 
-      - 3001:3001
-    environment: 
+    #Environment variables also as list or object property syntax (more readable)
+    environment:
+      #Need environment variable to tell where database is
+      # - DB_URL=mongodb://db/vidly
+      #Can also use object/property valye syntax
       DB_URL: mongodb://db/vidly
-    command: ./docker-entrypoint.sh
 
-  db:
+  backend:
+    build: ./backend
+    ports:
+      - 3001:3001
+  database:
+    #Tell it to pull from docker hub (instead of build)
     image: mongo:4.0-xenial
+    #Use port of that database client (check Postgresql)
     ports:
       - 27017:27017
+    #Need mongo to write to different volume instead of /data/db
     volumes:
       - vidly:/data/db
 
+#Outside of services
+#Need to define vidly volume here too for usage above
 volumes:
   vidly:
+
+    

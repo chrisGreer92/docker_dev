@@ -1,0 +1,10 @@
+{
+    "name": "docker",
+    "price": 149,
+    "isSet": true,
+    "tags": ["devops", "software"],
+    "usedBy": {
+        "firstName": "Chris",
+        "lastName": "Greer"
+    }
+}

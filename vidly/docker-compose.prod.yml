@@ -1,20 +1,30 @@
+#Compose file for production, similarly create for test and staging env's
+
+
 #Version is no longer used (always uses most recent)
 
 #Define parameters etc for each service
 services:
   web:
     #Tell it where to find dockerfile
-    build: ./frontend
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile.prod
     #Can set what the image name & tag are here!
     image: vidly_web:1
     #Use array/list syntax as we can have multiple ports
     ports:
-      - 3000:3000
+      #default port (just URL without port specified)
+      - 80:80
+    #Restart policy (default is no, many values to choose)
+    restart: unless-stopped
 
   api:
     build: ./backend
     ports:
       - 3001:3001
+
+    restart: unless-stopped
 
     #Environment variables also as list or object property syntax (more readable)
     environment:
@@ -23,12 +33,7 @@ services:
       #Can also use object/property valye syntax
       DB_URL: mongodb://db/vidly
       
-    #Can again link our volumes to automatically use changes (ONLY WHEN DEVELOPING)
-    #Can do relative paths from here (Rather than absolute)
-    volumes:
-      - ./backend:/app
-      #Again, tell it NOT to use node_modules locally to avoid us needing to install dependencies
-      - /app/node_modules
+    #Can remove volumes in production
 
     #Can overwrite default command in dockerfile
     #Since db might not be up, need to use a waiting script!
@@ -48,6 +53,7 @@ services:
     #Need mongo to write to different volume instead of /data/db
     volumes:
       - vidly:/data/db
+    restart: unless-stopped
 
 #Outside of services
 #Need to define vidly volume here too for usage above
